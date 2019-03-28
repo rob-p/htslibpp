@@ -23,7 +23,6 @@ public:
   // move other record:
   // NOTE : after this, other is left in an undefined state
   HTSRecord(HTSRecord&& other) {
-    if (rec_.data) { free(rec_.data); }
     rec_.data = other.rec_.data;
     if (other.rec_.data) {
       free(other.rec_.data);
@@ -37,6 +36,26 @@ public:
   // copy other record
   HTSRecord(const HTSRecord& other) {
     bam1_t* tp = bam_copy1(&rec_, &other.rec_);
+  }
+
+  // copy assignment operator
+  HTSRecord& operator=(const HTSRecord& other) {
+    bam1_t* tp = bam_copy1(&rec_, &other.rec_);
+    return *this;
+  }
+
+  // move assignment operator
+  HTSRecord& operator=(HTSRecord&& other) {
+    if (rec_.data) { free(rec_.data); }
+    rec_.data = other.rec_.data;
+    if (other.rec_.data) {
+      free(other.rec_.data);
+      other.rec_.data = nullptr;
+    }
+    rec_.m_data = other.rec_.m_data;
+    rec_.l_data = other.rec_.l_data;
+    rec_.core = other.rec_.core;
+    return *this;
   }
 
   bam1_t& rec() { return rec_; }
