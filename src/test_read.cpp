@@ -9,13 +9,21 @@ extern "C" {
 int main(int argc, char* argv[]) {
   const char* fn = argv[1];
 
-  HTSFile f(fn, HTS_FILE_MODE::READ);
-  HTSRecord b;
+  try {
+    HTSThreadPool p; p.init(5);
+    HTSFile f(fn, HTS_FILE_MODE::READ);
+    f.set_thread_pool(p);
 
-  int r = 0;
-  while ( (r = f.get_next_record(b)) >= 0) {
-    std::cerr << b.tid() << "\n";
+    HTSRecord b;
+
+    int r = 0;
+    while ( (r = f.get_next_record(b)) >= 0) {
+      std::cerr << b.tid() << "\n";
+    }
+    std::cerr << "sizeof b = " << sizeof(b) << "\n";
+  } catch (std::exception& e) {
+    std::cerr << "EXCEPTION : [" << e.what() << "]\n";
+    return 1;
   }
-  std::cerr << "sizeof b = " << sizeof(b) << "\n";
   return 0;
 }

@@ -5,8 +5,10 @@ extern "C" {
 #include "htslib/sam.h"
 }
 
+#include <stdexcept>
 #include <iostream>
 #include "htslibpp/HTSRecord.hpp"
+#include "htslibpp/HTSThreadPool.hpp"
 
 enum class HTS_FILE_MODE : uint8_t {
   READ = 0,
@@ -42,11 +44,13 @@ public:
     fh_ = hts_open(fname.c_str(), ms.c_str());
     if (fh_ == NULL) {
       // determine how we want to deal with this
-      std::cerr << "failed to open file " << fname << "\n";
+      std::string es = "HTSFile :: failed to open file " + fname;
+      throw std::runtime_error(es);
     } else {
       hdr_ = sam_hdr_read(fh_);
       if (hdr_ == NULL) {
-        std::cerr << "couldn't read header for file " << fname << "\n";
+        std::string es = "HTSFile :: couldn't read header for file " + fname;
+        throw std::runtime_error(es);
       }
       valid_ = true;
     }
@@ -57,6 +61,10 @@ public:
   ~HTSFile() {
     if (hdr_) { bam_hdr_destroy(hdr_); }
     if (fh_) { hts_close(fh_); }
+  }
+
+  void set_thread_pool(HTSThreadPool& p) {
+    hts_set_opt(fh_, HTS_OPT_THREAD_POOL, &(p.get_pool()));
   }
 
   int get_next_record(HTSRecord& r) {
