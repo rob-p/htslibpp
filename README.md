@@ -1,2 +1,2 @@
 # htslibpp
-A minimal modern C++ wrapper around htslib
+A minimal modern C++ (>= C++14) wrapper around htslib.
