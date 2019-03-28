@@ -5,12 +5,12 @@ extern "C" {
 #include "htslib/sam.h"
 }
 
-class BamRecord {
+class HTSRecord {
 private:
   bam1_t rec_;
 
 public:
-  BamRecord() {
+  HTSRecord() {
     clear_core_(rec_.core);
     rec_.l_data = 0;
     rec_.m_data = 0;
