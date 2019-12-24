@@ -56,6 +56,28 @@ public:
     }
   }
 
+  /**
+   * Move constructor
+   */
+  HTSFile(HTSFile&& other) {
+    fh_ = other.fh_; other.fh_ = nullptr;
+    hdr_ = other.hdr_; other.hdr_ = nullptr;
+    valid_ = other.valid_; other.valid_ = false;
+  }
+
+  /**
+   * Move assignment
+   */ 
+  HTSFile& operator=(HTSFile&& other) {
+    if (this != &other) {
+      fh_ = other.fh_;
+      other.fh_ = nullptr;
+      hdr_ = other.hdr_;
+      other.hdr_ = nullptr;
+      valid_ = other.valid_;
+      other.valid_ = false;
+    }
+  }
   HTSFile(const char* fname, HTS_FILE_MODE m) : HTSFile(std::string(fname), m) {}
 
   ~HTSFile() {

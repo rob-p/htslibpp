@@ -20,8 +20,11 @@ public:
 #endif // BAM_NO_ID
   }
 
-  // move other record:
-  // NOTE : after this, other is left in an undefined state
+  /**
+   * 
+   * move other record:
+   * NOTE : after this, other is left in an undefined state
+   */
   HTSRecord(HTSRecord&& other) {
     rec_.data = other.rec_.data;
     if (other.rec_.data) {
